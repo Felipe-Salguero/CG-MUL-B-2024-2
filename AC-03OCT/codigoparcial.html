@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Three.js Cubes</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script>
+        // Crear la escena, la cámara y el renderizador
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Control de cámara con OrbitControls
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        camera.position.z = 10;
+
+        // Generar cubos aleatoriamente entre 1 y 5
+        const numCubes = Math.floor(Math.random() * 5) + 1;
+        const cubes = [];
+        const cubeSpacing = 2; // Separación entre cubos
+
+        for (let i = 0; i < numCubes; i++) {
+            const geometry = new THREE.BoxGeometry();
+            const material = new THREE.MeshBasicMaterial({ color: 0x00ff00, wireframe: true });
+            const cube = new THREE.Mesh(geometry, material);
+
+            // Posicionar los cubos de forma horizontal y equidistante
+            cube.position.x = (i - (numCubes - 1) / 2) * (cubeSpacing + 1); // Ajuste horizontal
+            scene.add(cube);
+            cubes.push(cube);
+        }
+
+        // Añadir una luz ambiental
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        scene.add(ambientLight);
+
+        // Animación
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Animar los cubos
+            cubes.forEach(cube => {
+                cube.rotation.x += 0.01;
+                cube.rotation.y += 0.01;
+            });
+
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // Ajustar el tamaño del renderizado al cambiar el tamaño de la ventana
+        window.addEventListener('resize', () => {
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+        });
+    </script>
+</body>
+</html>
